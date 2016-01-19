@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+            http://www.springframework.org/schema/context 
+      		http://www.springframework.org/schema/context/spring-context.xsd 
+            http://www.springframework.org/schema/util 
+            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url" value="jdbc:mysql://${db.ip}:${db.port}/${db.database}?useUnicode=true&amp;characterEncoding=UTF-8" />
+		<property name="username" value="${db.user}" />
+		<property name="password" value="${db.password}" />
+		<property name="filters" value="${druid.filters}" />
+		<property name="maxActive" value="${druid.maxActive}" />
+		<property name="initialSize" value="${druid.initialSize}" />
+		<property name="maxWait" value="${druid.maxWait}" />
+		<property name="minIdle" value="${druid.minIdle}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}" />
+		<property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}" />
+		<property name="validationQuery" value="${druid.validationQuery}" />
+		<property name="testWhileIdle" value="${druid.testWhileIdle}" />
+		<property name="testOnBorrow" value="${druid.testOnBorrow}" />
+		<property name="testOnReturn" value="${druid.testOnReturn}" />
+		<property name="connectionErrorRetryAttempts" value="${druid.connectionErrorRetryAttempts}" />
+		<property name="breakAfterAcquireFailure" value="${druid.breakAfterAcquireFailure}" />
+		<property name="poolPreparedStatements" value="${druid.poolPreparedStatements}" />
+	</bean>
+	<!-- 查询分页处理 -->
+	<bean id="dao-page" class="com.dao.MySQLPage" />
+
+	<!-- 连接管理对象 -->
+	<bean id="dao-connection-provider"
+		class="com.dao.provider.DruidConnectionProvider">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!--通用DAO -->
+	<bean id="commonDao" class="com.dao.CommonDao">
+		<property name="connectionProvider" ref="dao-connection-provider" />
+		<property name="page" ref="dao-page" />
+	</bean>
+	
+	<bean id="personDao" class="com.kingdee.open.org.dao.PersonDao" parent="commonDao"></bean>
+	
+	<!-- 对某些业务方法执行事务拦截 -->
+	<bean id="transactionSupportInterceptor"
+		class="com.kingdee.open.dao.interceptor.spring.TransactionSupportInterceptor">
+	</bean>
+
+	<!--支持事务方法的业务对象及公共配置，具体业务可继承该配置 -->
+	<bean id="baseTransactionSupportBussiness" class="org.springframework.aop.framework.ProxyFactoryBean"
+		abstract="true">
+		<property name="interceptorNames">
+			<list>
+				<value>transactionSupportInterceptor</value>
+			</list>
+		</property>
+	</bean>
+	
+</beans>

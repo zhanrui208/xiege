@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+msbc-btn {
+  height: 24px;
+  line-height: 22px;
+  margin: 5px 6px 5px 15px;
+  display: inline-block;
+  background: #006fc2;
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  padding: 0 20px;
+  float: right;
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+      http://www.springframework.org/schema/context 
+      http://www.springframework.org/schema/context/spring-context.xsd 
+      http://www.springframework.org/schema/mvc 
+      http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+       <!-- 启用spring mvc 注解 ；用于激活那些已经在spring容器里注册过的bean-->
+	<!--  <context:annotation-config />-->
+	
+	<!-- 配置自动扫描的包 --> 
+	<!-- <context:component-scan>除了具有<context:annotation-config>的功能之外，还可以在指定的package下扫描以及注册javabean 。--> 
+	<!-- <context:annotation-config/>和 <context:component-scan>同时存在的时候，前者会被忽略。后者包含前者的功能 ;--> 
+	<!--<context:component-scan base-package="com"></context:component-scan>-->
+	
+	<!-- 如果使用了<mvc:annotation-driven />， 它会自动注册DefaultAnnotationHandlerMapping 
+	与AnnotationMethodHandlerAdapter这两个bean,所以就没有机会再给它注入interceptors属性，就无法指定拦截器 ;
+	它是spring MVC为@Controllers分发请求所必须的。并提供了：数据绑定支持，@NumberFormatannotation支持，
+	@DateTimeFormat支持，@Valid支持，读写XML的支持（JAXB），读写JSON的支持（Jackson）。-->
+	<mvc:annotation-driven /> 
+	
+	<!-- 静态文件通过默认的servlet进行处理 -->
+	<mvc:default-servlet-handler /> 
+	<mvc:resources location="/image/" mapping="/image/**"/> 
+	<mvc:resources location="/css/" mapping="/css/**"/> 
+	<mvc:resources location="/js/" mapping="/js/**"/>	
+
+	
+	
+	<!-- 完成请求和注解POJO的映射;AnnotationMethodHandlerAdapter类，通过注解，把一个URL映射到Controller类的方法上 
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+	-->	
+		
+		<!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀 -->  <!-- 配置视图解析器，即如何把handler方法返回值解析为实际的物理视图 --> 
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:prefix="/jsp/" p:suffix=".jsp" />
+
+</beans>

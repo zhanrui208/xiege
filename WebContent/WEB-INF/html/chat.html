@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>talk</title>
+<style>
+
+#im-chat-container{
+  	width: 670px;
+  	height: 100%;
+ 	margin:0 auto ;
+	/* vertical-align:middle;*/
+  	float: left;
+ 	 border: 1px solid #bebebe;
+  	background: #fff;
+ 	 margin-left: 200px;
+  	overflow: hidden;
+ 	display: none;
+  	position: relative;
+}
+
+.im-chat-title {
+  height: 42px;
+  padding: 10px 0 10px 10px;
+  border-bottom: 1px solid #e6e6e6;
+  overflow: hidden;
+  background: #eee;
+}
+
+.im-msb-content textarea {
+  width: 650px;
+  height: 77px;
+  display: block;
+  border: 0;
+  padding: 5px 10px;
+  resize: none;
+  outline: 0;
+  background-color: #fff;
+}	
+
+.im-msb-operation {
+  height: 28px;
+  line-height: 28px;
+  background: #eee;
+  border-top: 1px solid #e7e7e7;
+}
+.im-msbc-footer {
+  width: 670px;
+  height: 37px;
+  background: #f5f5f5;
+  overflow: hidden;
+}
+a.im-msbc-btn {
+  height: 24px;
+  line-height: 22px;
+  margin: 5px 6px 5px 15px;
+  display: inline-block;
+  background: #006fc2;
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  padding: 0 20px;
+  float: right;
+}
+</style>
+
+<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js" charset="UTF-8"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	var timeinter=1000;//轮训时间 
+   	var timer=null; //定时器
+	var login =false;
+	var xhrurl ="http://120.25.151.98:5998?";
+	
+	//timer=window.setTimeout("getMsg()",2000); //开启定时器	
+	
+  	$(".im-msbc-btn").click(function(){
+	 	var params ="<cmd id='5802'><ClientType val='1'/><TerminalType val='2'/><ActivityID val='110'/></cmd>";
+	 	params =encodeURI(params);
+		var tempurl = xhrurl + params;
+		
+		c_url = tempurl+' ';  
+        c_url +=document.location.href;  
+        //注意下面只需一个问号，不用具体的函数名  
+        c_url += '&jsonp=?'  
+        //注意是getJSON 哦  
+        $.getJSON(c_url, function(data){  
+            alert(data);  
+        });  
+		/**
+	    $.ajax({
+             type: "GET",
+             url: tempurl,
+             cache: false,
+             dataType: "jsonp",
+			 jsonp:"callback", 
+			 jsonpCallback:"XXX",
+			 success: function(json){
+				 alert("success");
+				 alert(json);
+			 },
+	    	error: function(){
+	    		
+            	alert('fail');
+            	
+        	}
+         });**/
+	    /**
+	  	initMsg();
+  		alert("11");**/
+  	});
+  	function sendMsg(){
+	  alert("11222");
+	};
+
+	function initMsg(){
+		alert("initMsg");
+		if (login){//如果已经登陆了，则开始获取消息
+			
+			}
+	};	
+	/**
+	 function getMsg(){//获取消息
+	  	alert("11222");
+	 	var params ="<cmd id='5802'><ClientType val='1'/><TerminalType val='2'/><ActivityID val='110'/></cmd";
+	 	params =encodeURI(params);
+		var tempurl = xhrurl + params;
+	    $.ajax({
+             type: "GET",
+             url: tempurl,
+             cache: false,
+             dataType: "jsonp",
+			 jsonp:"callback", 
+			 jsonpCallback:"?",
+			 success: function(json){
+				 alert("success");
+				 alert(json);
+			 },
+	    	error: function(){
+            	alert('fail');
+        	}
+         });
+	};**/
+
+function jsoncallback(data){
+	parseXML(data);
+};
+//解析返回的xml
+  function  parseXML(xml){
+     var  infos = xml.getElementsByTagName("info"); 
+      for(var i=0;i<infos.length;i++){
+       var  name = infos[i].getElementsByTagName('name')[0].firstChild.data; 
+       var issn = infos[i].getElementsByTagName('issn')[0].firstChild.data;
+       var id = infos[i].getElementsByTagName('id')[0].firstChild.data;
+       doAppend(name,issn,id);       
+      }     
+  }
+});
+/**
+$(function(){  
+	$.ajax(  
+    {  
+        type:'get',  
+        url : 'http://www.youxiaju.com/validate.php?loginuser=lee&loginpass=123456',  
+        dataType : 'jsonp',  
+        jsonp:"jsoncallback",  
+        success  : function(data) {  
+            alert("用户名："+ data.user +" 密码："+ data.pass);  
+        },  
+        error : function() {  
+            alert('fail');  
+        }  
+    }  
+	);  
+}) 
+**/ 
+</script>
+</head>
+<body>
+
+	<div id ="im-chat-container" class="im-chat-container" style="display: block;">
+		<!-- 消息标题 -->
+		<div class="im-chat-title">
+			<span class="im-char-usersnum">聊天</span>
+		</div>
+
+        <div class="im-chat-main-wrapper" style="height: 409px;">
+        	 <!-- 消息内容 -->
+            <div class="im-chat-p-ms">
+               
+             <div><p>今天天气真好1</p></div>
+             <div><p>今天天气真好2</p></div>
+             <div><p>今天天气真好3</p></div>
+             <div><p>今天天气真好4</p></div>
+             <div><p>今天天气真好5</p></div>
+             <!-- 消息内容 -->
+        </div>   
+        
+        <!-- 消息发送区域 -->     
+		<div class="im-message-sendbox ">
+            <ul class="im-msb-operation">
+        		<li>表情</li>
+    		</ul>
+    		<div class="im-msb-content">
+        		<textarea id="im-msbc-box" class="textarea"></textarea>
+        		<div class="im-msbc-footer">
+            		<a class="im-msbc-btn" href="javascript:;" title="发送">发送</a>
+        		</div>
+    		</div>
+		</div>    
+    </div> 
+    
+</body>
+<script>
+	
+</script>
+</html>    
