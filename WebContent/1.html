@@ -1,0 +1,349 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.1.min.js" ></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	var _ActivityID ="111";
+	var _PresidentID ="";
+	var _UserID ="";
+	
+	var _tmid=0;
+	
+	var getTimers=1000;//默认的请求消息轮询时间
+	var _KeepAliveTimer=getTimers;
+	
+	var _Result ="";//各种请求的成功标识
+	var _SrcID="";//获取服务器消息时的发送者id
+	var _DestID="";//获取服务器消息的接受者id
+	
+	var _url="http://120.25.151.98:5998?";//服务器地址
+
+	$("#btnlogin").click(function(){
+			login();
+	});
+	$("#btnlogout").click(function(){
+			logout();
+	});
+	$("#btngetmsg").click(function(){
+			getmsg();
+	});
+	$("#btnsendmsg").click(function(){
+			sendmsg();
+	});	
+		
+	//登录	
+	function login(){
+		var ClientType="1"; //ClientType 1为WEB 2为PC
+		var TerminalType="1";//TerminalType暂时未用到，留作扩展
+		var ActivityID=_ActivityID;//直播活动ID
+		var KeepAliveTimer=null;
+		//服务器登录请求参数
+		var reqdate="<cmd id='5802'><ClientType val='" + ClientType +"'/><TerminalType val='" + TerminalType +"'/><ActivityID val='" + ActivityID +"'/></cmd>";
+		var url=_url +reqdate ;
+        $.ajax({  
+            type: "GET",  
+            async: false,  
+            url:url,  
+            dataType: "jsonp",  
+            jsonp: "callback",
+            contentType: "application/jsonp; charset=utf-8",
+            success: function(json){  
+			//返回结果 0成功 -1失败 0x1002 房间不存在 0x1003房间已满，0x1004未登录，具体值可以通过计算器转换为十进制Result 4098房间不存在 4099房间满了，5000 没有登录
+				var resdata =json.respCmd;
+				_Result = $(resdata).find('Result').attr('val');
+				if (_Result=='0'){
+					//<!--服务器给WEB端分配的ID，需要记住作为自身的ID证明-->
+					_UserID  = $(resdata ).find('UserID').attr('val');
+					//<!--主席端ID，需要记住作为发送消息的目的ID-->
+					_PresidentID  = $(resdata ).find('PresidentID').attr('val');
+					//<!--消息探测时长，设置该时长定时器，定时从服务器获取消息，单位毫秒-->
+					_KeepAliveTimer=$(resdata).find('KeepAliveTimer').attr('val');
+					alert("登录成功！");
+					if (_KeepAliveTimer==null || _KeepAliveTimer ==0){
+						_KeepAliveTimer=getTimers;
+					}
+					//登录成功之后开始轮询消息
+					var _tmid = window.setInterval(getmsgafterlgon, _KeepAliveTimer);
+				}else{
+					alert("登录失败！");
+				}
+			},  
+			error: function(){  
+				alert("fail");  
+			}  
+		})
+	};	
+	/**
+		<!--客户端请求登录-->
+	<cmd id="5802" ver="0">
+		<!--1为直播接收客户端-->
+		<!--2为直播推流客户端-->
+		<!--ClientType 1为PC 2为WEB-->
+		<ClientType val="1" /> 
+		<!--1为PC-->
+		<!--2为WEB-->
+		<TerminalType val="1" /> 
+		<!--直播活动ID-->
+		<ActivityID val="A2015111200777" />
+	</cmd> 
+	
+	<!--服务器返回登录请求-->
+	<cmd id="5902" >
+		<!--返回结果 0成功 -1失败 0x1002 房间不存在 0x1003房间已满，0x1004未登录，具体值可以通过计算器转换为十进制-->
+		<Result val="0"/>
+		<!--服务器给WEB端分配的ID，需要记住作为自身的ID证明-->
+		<UserID val="100001" />
+		<!--主席端ID，需要记住作为发送消息的目的ID-->
+		<PresidentID val="100001" />
+		<!--消息探测时长，设置该时长定时器，定时从服务器获取消息，单位毫秒-->
+		<KeepAliveTimer val="10000" />
+	</cmd>
+	*/
+	
+	
+	//定时器执行函数
+	function getmsgafterlgon(){
+		if (_PresidentID!="" && _PresidentID!=null){
+			getmsg();
+			alert("循环读取消息");
+		} 
+	}
+	
+	
+	
+	//注销	
+	function logout(){
+		var UserID=_UserID; //用户
+		var ActivityID=_ActivityID;//直播活动ID
+		//服务器登录请求参数
+		var reqdate="<cmd id='5804'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityID +"'/></cmd>";
+		var url=_url +reqdate ;
+        $.ajax({  
+            type: "GET",  
+            async: false,  
+            url:url,  
+            dataType: "jsonp",  
+            jsonp: "callback",
+            contentType: "application/jsonp; charset=utf-8",
+            success: function(json){  
+				var resdata =json.respCmd;
+				_Result = $(resdata).find('Result').attr('val');
+				if (_Result=='0'){
+					alert("注销成功！");
+					_UserID="";
+					_PresidentID="";
+					_KeepAliveTimer=0;
+					window.clearInterval(_tmid);//关闭定时器
+				}else{
+					alert("注销失败！");
+				}
+			},  
+			error: function(){  
+				alert("fail");  
+			}  
+		})
+	};	
+	/**
+	<!--退出请求-->
+	<cmd id="5804" ver="0">
+		<UserID val="100001" />
+		<!--直播活动ID-->
+		<ActivityID val="A2015111200777" />
+	</cmd> 
+	
+	<!--服务器返回消息探测请求-->
+	<cmd id="5904" >
+		<!--返回结果 0成功-->
+		<Result val="0"/>
+	</cmd>
+	*/
+	
+	
+	//获取服务器消息
+	function getmsg(){
+		var ActivityID=_ActivityID;//直播活动ID
+		var UserID =_UserID;
+		var reqdate="<cmd id='5803'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityID +"'/></cmd>";
+		var url=_url +reqdate ;
+        $.ajax({  
+            type: "GET",  
+            async: false,  
+            url:url,  
+            dataType: "jsonp",  
+            jsonp: "callback",
+            contentType: "application/jsonp; charset=utf-8",
+            success: function(json){  
+				//返回结果 0成功 0x1004WEB还未登录，具体值可以通过计算器转换为十进制
+				var resdata =json.respCmd;
+				_Result = $(resdata).find('Result').attr('val');
+				if (_Result=='0'){
+					alert("获取消息成功！");
+					//消息内容
+					var msgcontent = $(resdata).find('MsgInfo').children().map(function(){
+							return $(this).find('Content').attr('val');
+						}).get().join().split(",");
+						
+					//发送者ID，这里一般为主席ID
+					var _SrcID = $(resdata).find('MsgInfo').children().map(function(){
+							return $(this).find('SrcID').attr('val');
+						}).get().join().split(",");	
+					
+					//接受者ID，这里一般为自己ID
+					var _DestID = $(resdata).find('MsgInfo').children().map(function(){
+							return $(this).find('DestID').attr('val');
+						}).get().join().split(",");	
+					
+					
+					//发送时间
+					var SendTime = $(resdata).find('MsgInfo').children().map(function(){
+							return $(this).find('SendTime').attr('val');
+						}).get().join().split(",");	
+					
+					alert("获取的消息为："+msgcontent);
+				}else if (_Result=='4100'){
+					alert("未登录！");
+					window.clearInterval(_tmid);//关闭定时器
+				}else{
+					alert("获取消息失败！");
+				}
+			},  
+			error: function(){  
+				alert("fail");  
+			}  
+		})
+	};
+	/**
+	<!--消息探测请求-->
+	<cmd id="5803" ver="0">
+		<UserID val="100001" />
+		<!--直播活动ID-->
+		<ActivityID val="A2015111200777" />
+	</cmd> 
+	<!--服务器返回消息探测请求-->
+	<cmd id="5903" >
+		<!--返回结果 0成功, 0x1004WEB还未登录-->
+		<Result val="0"/>
+		<!--消息队列-->
+		<MsgInfo>
+			<Msg>
+				<!--发送者ID，这里一般为主席ID-->
+				<SrcID val="100001"/>
+				<!--接受者ID，这里一般为自己ID-->
+				<DestID val="100001"/>
+				<!--消息内容-->
+				<Content val="你好"/>
+				<!--发送时间-->
+				<SendTime val="2423423"/>
+			</Msg>
+			<Msg>
+				<!--发送者ID，这里一般为主席ID-->
+				<SrcID val="100001"/>
+				<!--接受者ID，这里一般为自己ID-->
+				<DestID val="100001"/>
+				<!--消息内容-->
+				<Content val="你好"/>
+				<!--发送时间-->
+				<SendTime val="2423423"/>
+			</Msg>
+		</MsgInfo>
+	</cmd>
+	**/
+	
+	//向服务器发消息
+	function sendmsg(){
+		var ActivityID=_ActivityID;//直播活动ID
+		var UserID =_PresidentID; //接受方：UserID：0，表示群发消息，如果不是群发消息，则跟DestID保持一致
+		var SrcID =_UserID; //发送者ID，这里一般为自己ID
+		var DestID =_PresidentID;//接受者ID，这里一般为主席ID， 0为广播消息
+		var Content =encodeURI(encodeURI("服务器你好！"));//消息内容-
+		var SendTime="1231321";//发送时间
+		var reqdate="<cmd id='5805'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityID +"'/><SrcID val='" + SrcID +"'/>"
+			+ "<DestID val='" + DestID +"'/><Content val='" + Content +"'/><SendTime val='" + SendTime +"'/></cmd>";
+		var url=_url +reqdate ;
+        $.ajax({  
+            type: "GET",  
+            async: false,  
+            url:url,  
+            dataType: "jsonp",  
+            jsonp: "callback",
+            contentType: "application/jsonp; charset=utf-8",
+            success: function(json){  
+				//返回结果 0成功 0x1004WEB还未登录，具体值可以通过计算器转换为十进制
+				var resdata =json.respCmd;
+				_Result = $(resdata).find('Result').attr('val');
+				if (_Result=='0'){
+					alert("发送消息成功！");
+				}else{
+					alert("发送消息失败！");
+				}
+			},  
+			error: function(){  
+				alert("fail");  
+			}  
+		})		
+	};	
+	/**
+		<!--向服务器发送消息请求-->
+	<cmd id="5805" ver="0">
+		<!--发送者ID-->
+		<UserID val="100001" />	
+		<!--直播活动ID-->
+		<ActivityID val="A2015111200777" />
+		<!--发送者ID，这里一般为自己ID-->
+		<SrcID val="100001"/>
+		<!--接受者ID，这里一般为主席ID， 0为广播消息-->
+		<DestID val="100001"/>
+		<!--消息内容-->
+		<Content val="你好"/>
+		<!--发送时间-->
+		<SendTime val="2423423"/>
+
+	</cmd> 
+		<!--服务器返回发送消息结果-->
+	<cmd id="5905" >
+		<!--返回结果 0成功-->
+		<Result val="0"/>
+	</cmd>
+	**/
+	
+	$("#getXML").click(function(){
+		getXML();
+	});
+	function getXML(){
+		var resdata="<cmd id='5903'><Result val='0' /><MsgInfo><Msg><SrcID val='900049' /><DestID val='0' /><Content val='111' />"
+			+ "<SendTime val='0' /></Msg><Msg><SrcID val='900049' /><DestID val='0' /><Content val='111234' /><SendTime val='0' /></Msg></MsgInfo></cmd>"
+		var result = $(resdata).find('MsgInfo').children().map(function(){
+			return $(this).attr('Content')+'='+$(this).text();
+		}).get().join();		
+		
+		alert(resdata); 			
+	}; 
+})		
+</script>
+<title>Insert title here</title>
+</head>
+<body>
+<p>
+<a>我是一只小毛驴</a>
+<button id ="btnlogin">登录...</button>
+</p>
+<p>
+<a>我是一只小毛驴</a>
+<button id ="btnlogout">注销...</button>
+</p>
+<p>
+<a>我是一只小毛驴</a>
+<button id ="btngetmsg">获取消息...</button>
+</p>
+<p>
+<a>我是一只小毛驴</a>
+<button id ="btnsendmsg">发送消息...</button>
+</p>
+<p>
+<a>我是一只小毛驴</a>
+<button id ="getXML">解析XML格式...</button>
+</p>
+</body>
+</html>
