@@ -65,13 +65,19 @@ a.im-msbc-btn {
 </style>
 
 
-<script type="text/javascript" src="https://www.eztalks.com/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.1.min.js" ></script>
 <script type="text/javascript">
 $(document).ready(function(){
-	
-	
-	
-
+	$(".im-msbc-btn").click(function(){
+		addcontext();
+	});
+	function addcontext(){
+		var  $msg=$(".im-chat-p-ms");
+		if ($msg.children().length <10){
+		var context="<div><p>今天天气真好1</p></div>";
+			$(".im-chat-p-ms").append(context);
+		}
+	};
 })
 </script>
 </head>
@@ -86,18 +92,12 @@ $(document).ready(function(){
         <div class="im-chat-main-wrapper" style="height: 409px;">
         	 <!-- 消息内容 -->
             <div class="im-chat-p-ms">
-               
+             
              <div><p>今天天气真好1</p></div>
              <div><p>今天天气真好2</p></div>
              <div><p>今天天气真好3</p></div>
              <div><p>今天天气真好4</p></div>
              <div><p>今天天气真好5</p></div>
-               <div><p>今天天气真好1</p></div>
-             <div><p>今天天气真好2</p></div>
-             <div><p>今天天气真好3</p></div>
-             <div><p>今天天气真好4</p></div>
-             <div><p>今天天气真好5</p></div>           
-             <!-- 消息内容 -->
         </div>   
         
         <!-- 消息发送区域 -->     
