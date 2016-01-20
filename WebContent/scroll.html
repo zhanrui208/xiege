@@ -1,45 +1,136 @@
-<!DOCTYPE html>
-<textarea id="runcode5">
-"<HTML> 
-<HEAD> 
-<TITLE>���Ա����ڵĹ�����</TITLE> 
-</HEAD> 
-<BODY> 
-<table>
-  <tr>
-    <td>�����ڵĹ�����:</td>
-    <td>
-      <div id="wins" 
-        style="position:absolute;height:200;width:200;overflow:auto;background:#EEEEEE;"> 
-        <p>pppppppppppppppppppppppppppppppppppppppppppppppppp </p> 
-        <p>pppppppppppppppppppppppppppppppppppppppppppppppppp </p> 
-        <p>ppppppppppppppppppppppppp </p> 
-        <p>ppppppppppppppppppppppppp </p> 
-        <p>ppppppppppppppppppppppppp </p> 
-        <p>ppppppppppppppppppppppppp </p> 
-        <p>ppppppppppppppppppppppppp </p> 
-        <p>ppppppppppppppppppppppppp </p> 
-        <p>ppppppppppppppppppppppppp </p> 
-        <p>ppppppppppppppppppppppppp </p> 
-        <p>ppppppppppppppppppppppppp </p> 
-        <p>ppppppppppppppppppppppppp </p> 
-      </div>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" align="right">
-      <span onmouseover='scrollb=setInterval("wins.scrollLeft-=10",100)' 
-                 onmouseout=clearInterval(scrollb)>����</span> 
-            <span onmouseover='scrollb=setInterval("wins.scrollTop-=10",100)' 
-                        onmouseout=clearInterval(scrollb)>����</span>
-      <span onmouseover='scrollb=setInterval("wins.scrollLeft+=10",100)' 
-                 onmouseout=clearInterval(scrollb)>����</span>
-      <span onmouseover='scrollb=setInterval("wins.scrollTop+=10",100)' 
-                 onmouseout=clearInterval(scrollb)>����</span>
-    </td>
-  </tr>
-</table>
-</BODY> 
-</HTML>
-"
-</textarea>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+    <title>QQ好友列表</title> 
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.1.min.js" ></script>
+    <script type="text/javascript"> 
+        $(function () { 
+            var dialogShowed = false; 
+            //初始化好友列表 
+            $("#QQList > li:odd").addClass("body"); 
+            $("#QQList > li:even").addClass("header").click(function () { 
+                $(this).next().show("2000").siblings("li.body").hide("2000"); 
+            }); 
+  
+            $("#QQList > li:odd > ul li").mouseenter(function () { 
+                $(this).css("background-color", "rgb(72,92,127)"); 
+            }).mouseleave(function () { 
+                $(this).removeAttr("style"); 
+            }).click(function () { 
+                var fThis = $(this); 
+                var chartRoom = $("#chartRoom"); 
+                $("#chartInfo").val(""); 
+                if (dialogShowed) 
+                    chartRoom.hide("1000"); 
+                $("#chartTitleText").text("与 " + fThis.text() + " 聊天中"); 
+                $("#chartRoom").show("3000"); 
+                dialogShowed = true; 
+            }).addClass("person"); 
+  
+            $("#QQList > li:first").click(); 
+  
+            //聊天窗口相关操作 
+            $("#close").click(function () { 
+                dialogShowed = false; 
+                $("#chartRoom").hide("3000"); 
+            }); 
+  
+            $("#send").click(function () { 
+                var chartInfo = $("#chartInfo"); 
+                var sendInfo = $("#sendInfo"); 
+                chartInfo.val(chartInfo.val() + "\n 我说:\n" + sendInfo.val()); 
+                sendInfo.val(""); 
+                sendInfo.focus(); 
+            }); 
+        }); 
+    </script> 
+  
+    <style type="text/css"> 
+        ul 
+        { 
+            list-style-type:none; 
+        } 
+        #QQList 
+        { 
+            width:120px; 
+        } 
+        .header 
+        { 
+            background-color:rgb(42,59,88); 
+            cursor:pointer; 
+            text-align:center; 
+        } 
+        .body 
+        { 
+            background-color:rgb(188,199,216); 
+        } 
+        .person 
+        { 
+            cursor:pointer; 
+        } 
+    </style> 
+</head> 
+<body> 
+    <ul id="QQList"> 
+        <li>我的好友</li> 
+        <li> 
+            <ul> 
+                <li>张三</li> 
+                <li>李四</li> 
+                <li>王武</li> 
+            </ul> 
+        </li> 
+        <li>陌生人</li> 
+        <li> 
+            <ul> 
+                <li>好友1</li> 
+                <li>好友2</li> 
+                <li>好友3</li> 
+                <li>好友4</li> 
+                <li>好友5</li> 
+                <li>好友6</li> 
+                <li>好友7</li> 
+            </ul> 
+        </li> 
+        <li>黑名单</li> 
+        <li> 
+            <ul> 
+                <li>好友1</li> 
+                <li>好友2</li> 
+                <li>好友3</li> 
+            </ul> 
+        </li> 
+    </ul> 
+  
+    <!--聊天窗口-->
+    <div id="chartRoom" style="position:absolute; top:20px; left:300px; display:none;"> 
+        <table border="0" style="background-color:rgb(42,59,88);"> 
+            <!--标题栏-->
+            <tr style="cursor:move;" id="charTitle"> 
+                <!--标题文字-->
+                <td id="chartTitleText">与 某某某 聊天中</td> 
+                <!--关闭按钮-->
+                <td style="width:10px; cursor:pointer;" id="closeX">×</td> 
+            </tr> 
+  
+            <!--聊天记录窗口-->
+            <tr> 
+                <td><textarea id="chartInfo" cols="40" rows="20" readonly="readonly" class="body"></textarea></td> 
+            </tr> 
+  
+            <!--发送记录窗口-->
+            <tr> 
+                <td><textarea id="sendInfo" cols="40" rows="5" class="body"></textarea></td> 
+            </tr> 
+  
+            <tr> 
+                <!--按钮-->
+                <td colspan="2"> 
+                    <input id="send" type="button" value="发送" /> 
+                    <input id="close" type="button" value="关闭" /> 
+                </td> 
+            </tr> 
+        </table> 
+    </div> 
+</body> 
+</html>
