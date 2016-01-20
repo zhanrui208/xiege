@@ -69,102 +69,10 @@ a.im-msbc-btn {
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	var timeinter=1000;//轮训时间 
-   	var timer=null; //定时器
-	var login =false;
-	var xhrurl ="http://120.25.151.98:5998?";
 	
-	//timer=window.setTimeout("getMsg()",2000); //开启定时器	
 	
-  	$(".im-msbc-btn").click(function(){
-  		var data="";
-        $.ajax({  
-            type: "GET",  
-            async: false,  
-            url:"https://www.eztalks.com/my/Meetingpost",  
-            dataType: "jsonp",  
-            jsonp: "callback",
-            jsonpCallback:data,
-            success: function(json){  
-				if (json.func){
-					window.location.href = "https://www.eztalks.com/my/active?email="+base64decode(json.func);
-				}else if (json.are){
-					alert('email exist,please change other email address');
-				}else if (json.login){
-					alert('You have signed in');
-				}
-			},  
-			error: function(){  
-				alert("fail");  
-			}  
-        });	
-  	});
-  	function sendMsg(){
 
-	  
-	 // getMsg();
-	};
-	
-	function initMsg(){
-		alert("initMsg");
-		if (login){//如果已经登陆了，则开始获取消息
-			
-			}
-	};	
-	 function getMsg(){//获取消息
-	  	alert("11222");
-	 	var params ="<cmd id='5802'><ClientType val='1'/><TerminalType val='2'/><ActivityID val='110'/></cmd>";
-	 	params =encodeURI(params);
-		var tempurl = xhrurl + params;
-	    $.ajax({
-	         type: "GET",  
-	          async: false,  
-	          url:"https://www.eztalks.com/my/Meetingpost",  
-	          dataType: "jsonp",  
-	          jsonp: "callback",
-	          jsonpCallback:" ",		 
-			 success: function(json){
-				 alert("success");
-				 alert(json);
-			 },
-	    	error: function(){
-            	alert('fail');
-        	}
-         });
-	};
-
-function jsoncallback(data){
-	parseXML(data);
-};
-//解析返回的xml
-  function  parseXML(xml){
-     var  infos = xml.getElementsByTagName("info"); 
-      for(var i=0;i<infos.length;i++){
-       var  name = infos[i].getElementsByTagName('name')[0].firstChild.data; 
-       var issn = infos[i].getElementsByTagName('issn')[0].firstChild.data;
-       var id = infos[i].getElementsByTagName('id')[0].firstChild.data;
-       doAppend(name,issn,id);       
-      }     
-  }
-});
-/**
-$(function(){  
-	$.ajax(  
-    {  
-        type:'get',  
-        url : 'http://www.youxiaju.com/validate.php?loginuser=lee&loginpass=123456',  
-        dataType : 'jsonp',  
-        jsonp:"jsoncallback",  
-        success  : function(data) {  
-            alert("用户名："+ data.user +" 密码："+ data.pass);  
-        },  
-        error : function() {  
-            alert('fail');  
-        }  
-    }  
-	);  
-}) 
-**/ 
+})
 </script>
 </head>
 <body>
@@ -184,6 +92,11 @@ $(function(){
              <div><p>今天天气真好3</p></div>
              <div><p>今天天气真好4</p></div>
              <div><p>今天天气真好5</p></div>
+               <div><p>今天天气真好1</p></div>
+             <div><p>今天天气真好2</p></div>
+             <div><p>今天天气真好3</p></div>
+             <div><p>今天天气真好4</p></div>
+             <div><p>今天天气真好5</p></div>           
              <!-- 消息内容 -->
         </div>   
         
