@@ -10,8 +10,14 @@
       http://www.springframework.org/schema/context/spring-context.xsd 
       http://www.springframework.org/schema/mvc 
       http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
-       <!-- 启用spring mvc 注解 ；用于激活那些已经在spring容器里注册过的bean-->
-	<!--  <context:annotation-config />-->
+       <!-- 启用spring mvc 注解 ；用于激活那些已经在spring容器里注册过的bean
+        Spring 容器注册
+		AutowiredAnnotationBeanPostProcessor、CommonAnnotationBeanPostProcessor、
+		PersistenceAnnotationBeanPostProcessor 以及 RequiredAnnotationBeanPostProcessor 这 4 个BeanPostProcessor。
+		注册这4个 BeanPostProcessor的作用，就是为了你的系统能够识别相应的注解。
+		<context:annotation-config />
+       -->
+	
 	
 	<!-- 配置自动扫描的包 --> 
 	<!-- <context:component-scan>除了具有<context:annotation-config>的功能之外，还可以在指定的package下扫描以及注册javabean 。--> 
@@ -22,15 +28,24 @@
 	与AnnotationMethodHandlerAdapter这两个bean,所以就没有机会再给它注入interceptors属性，就无法指定拦截器 ;
 	它是spring MVC为@Controllers分发请求所必须的。并提供了：数据绑定支持，@NumberFormatannotation支持，
 	@DateTimeFormat支持，@Valid支持，读写XML的支持（JAXB），读写JSON的支持（Jackson）。-->
-	<mvc:annotation-driven /> 
+	<!--  <mvc:annotation-driven /> -->
 	
-	<!-- 静态文件通过默认的servlet进行处理 -->
+	<!-- 静态文件通过默认的servlet进行处理 
 	<mvc:default-servlet-handler /> 
 	<mvc:resources location="/image/" mapping="/image/**"/> 
 	<mvc:resources location="/css/" mapping="/css/**"/> 
 	<mvc:resources location="/js/" mapping="/js/**"/>	
-
+	-->
+	<!-- 配置拦截器 -->
+	<bean id="myHandlerInterceptorAdapter" class="com.xie.control.MyHandlerInterceptorAdapter"/>
 	
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref bean="myHandlerInterceptorAdapter" />
+			</list>
+		</property>
+	</bean>
 	
 	<!-- 完成请求和注解POJO的映射;AnnotationMethodHandlerAdapter类，通过注解，把一个URL映射到Controller类的方法上 
 	<bean

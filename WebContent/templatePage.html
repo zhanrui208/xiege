@@ -3,8 +3,9 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="renderer" content="webkit">
-  <title>232332</title>
- 
+  <title>直播</title>
+  
+ <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.1.min.js" ></script>
   <script type="text/javascript">
     var ua = navigator.userAgent;
     var ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
@@ -15,8 +16,411 @@
       //ӆ¶¯¶̌�²¥·ƒ³
       location.href ='http://live.letvcloud.com/live/playerPage/getMobileView?activityId='
     }
-    </script>
-  <style type="text/css">
+
+    
+$(document).ready(function(){
+	$(".msg-list-all")[0].scrollTop = $(".msg-list-all")[0].scrollHeight;//滚动条默认在底部
+	var activityId = getparamvalue();
+	if (activityId==""){
+		activityId="110";
+	}
+	alert(activityId);
+	//消息体
+	var msgcontext=
+		{
+			'sender':'',//发送者
+			'receiver':'',//发送者
+			'time':'',//接发时间
+			'context':'',//内容
+			'type':''//内容类型
+		};
+
+	//登录
+	$("#im-login").click(function(){
+
+	});
+
+	//退出	
+	$("#im-logout").click(function(){
+		var activityId = getparamvalue();
+	});
+	
+	
+	$(".im-msbc-btn").click(function(){
+		if ($.trim($("#im-msbc-box").val())==""){
+			return;
+		}
+		
+		getsendmsg(msgcontext);
+		var temp = loadmsg(msgcontext);
+		$("ul.msg-list").append(temp);
+		$(".msg-list-all")[0].scrollTop = $(".msg-list-all")[0].scrollHeight;
+		$("#im-msbc-box").val("");//清空消息发送框
+	});
+
+	//获取消息内容组装消息对象
+	function getsendmsg(msgcontext){
+		//装载消息体
+		msgcontext.context=$("#im-msbc-box").val();
+		msgcontext.sender="群主";
+		msgcontext.receiver="";
+		msgcontext.time="01-21 14:34:12";
+		msgcontext.type="";
+	}
+
+	//根据消息对象生成消息html格式内容
+	function loadmsg(msgcontext){
+
+		var msg="<li class='clearfix'>"
+					+"<div class ='msgbox' msgid='1' >"
+					+"		<div class='msgpart'> "
+					+"			<span class='sendname'> "
+					+"				 "+ msgcontext.sender 
+					+"			</span> "
+					+"			<span class='sendtime'>"
+					+"				" + msgcontext.time 
+					+"			</span>"
+					+"		</div>"
+					+"		<div class='msgcontext'>"
+					+"			<div class ='sendingMsg'></div>"
+					+"			<a style='display:block;width:40px;'>"+ msgcontext.context +"</a>"
+					+"		</div>"
+					+"	</div>"
+					+"</li>"
+		return 	msg ;		
+	};
+
+	//获取参数值
+	function getparamvalue(){
+		var temp = document.getElementsByName("flashVars")[0].value;
+		var val= temp.split("=");
+		if (val.length>=2){
+			return $.trim(val[1]);
+		}
+	};
+	
+	//
+	var _ActivityID =activityId;
+	var _PresidentID ="";
+	var _UserID ="";
+	
+	var _tmid=0;
+	
+	var getTimers=1000;//默认的请求消息轮询时间
+	var _KeepAliveTimer=getTimers;
+	
+	var _Result ="";//各种请求的成功标识
+	var _SrcID="";//获取服务器消息时的发送者id
+	var _DestID="";//获取服务器消息的接受者id
+	
+	var _url="http://120.25.151.98:5998?";//服务器地址
+
+	$("#btnlogin").click(function(){
+			login();
+	});
+	$("#btnlogout").click(function(){
+			logout();
+	});
+	$("#btngetmsg").click(function(){
+			getmsg();
+	});
+	$("#btnsendmsg").click(function(){
+			sendmsg();
+	});	
+		
+	//登录	
+	function login(){
+		var ClientType="1"; //ClientType 1为WEB 2为PC
+		var TerminalType="1";//TerminalType暂时未用到，留作扩展
+		var ActivityID=_ActivityID;//直播活动ID
+		var KeepAliveTimer=null;
+		//服务器登录请求参数
+		var reqdate="<cmd id='5802'><ClientType val='" + ClientType +"'/><TerminalType val='" + TerminalType +"'/><ActivityID val='" + ActivityID +"'/></cmd>";
+		var url=_url +reqdate ;
+        $.ajax({  
+            type: "GET",  
+            async: false,  
+            url:url,  
+            dataType: "jsonp",  
+            jsonp: "callback",
+            contentType: "application/jsonp; charset=utf-8",
+            success: function(json){  
+			//返回结果 0成功 -1失败 0x1002 房间不存在 0x1003房间已满，0x1004未登录，具体值可以通过计算器转换为十进制Result 4098房间不存在 4099房间满了，5000 没有登录
+				var resdata =json.respCmd;
+				_Result = $(resdata).find('Result').attr('val');
+				if (_Result=='0'){
+					//<!--服务器给WEB端分配的ID，需要记住作为自身的ID证明-->
+					_UserID  = $(resdata ).find('UserID').attr('val');
+					//<!--主席端ID，需要记住作为发送消息的目的ID-->
+					_PresidentID  = $(resdata ).find('PresidentID').attr('val');
+					//<!--消息探测时长，设置该时长定时器，定时从服务器获取消息，单位毫秒-->
+					_KeepAliveTimer=$(resdata).find('KeepAliveTimer').attr('val');
+					alert("登录成功！");
+					if (_KeepAliveTimer==null || _KeepAliveTimer ==0){
+						_KeepAliveTimer=getTimers;
+					}
+					//登录成功之后开始轮询消息
+					var _tmid = window.setInterval(getmsgafterlgon, _KeepAliveTimer);
+				}else{
+					alert("登录失败！");
+				}
+			},  
+			error: function(){  
+				alert("fail");  
+			}  
+		})
+	};	
+	/**
+		<!--客户端请求登录-->
+	<cmd id="5802" ver="0">
+		<!--1为直播接收客户端-->
+		<!--2为直播推流客户端-->
+		<!--ClientType 1为PC 2为WEB-->
+		<ClientType val="1" /> 
+		<!--1为PC-->
+		<!--2为WEB-->
+		<TerminalType val="1" /> 
+		<!--直播活动ID-->
+		<ActivityID val="A2015111200777" />
+	</cmd> 
+	
+	<!--服务器返回登录请求-->
+	<cmd id="5902" >
+		<!--返回结果 0成功 -1失败 0x1002 房间不存在 0x1003房间已满，0x1004未登录，具体值可以通过计算器转换为十进制-->
+		<Result val="0"/>
+		<!--服务器给WEB端分配的ID，需要记住作为自身的ID证明-->
+		<UserID val="100001" />
+		<!--主席端ID，需要记住作为发送消息的目的ID-->
+		<PresidentID val="100001" />
+		<!--消息探测时长，设置该时长定时器，定时从服务器获取消息，单位毫秒-->
+		<KeepAliveTimer val="10000" />
+	</cmd>
+	*/
+	
+	
+	//定时器执行函数
+	function getmsgafterlgon(){
+		if (_PresidentID!="" && _PresidentID!=null){
+			getmsg();
+			alert("循环读取消息");
+		} 
+	}
+	
+	
+	
+	//注销	
+	function logout(){
+		var UserID=_UserID; //用户
+		var ActivityID=_ActivityID;//直播活动ID
+		//服务器登录请求参数
+		var reqdate="<cmd id='5804'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityID +"'/></cmd>";
+		var url=_url +reqdate ;
+        $.ajax({  
+            type: "GET",  
+            async: false,  
+            url:url,  
+            dataType: "jsonp",  
+            jsonp: "callback",
+            contentType: "application/jsonp; charset=utf-8",
+            success: function(json){  
+				var resdata =json.respCmd;
+				_Result = $(resdata).find('Result').attr('val');
+				if (_Result=='0'){
+					alert("注销成功！");
+					_UserID="";
+					_PresidentID="";
+					_KeepAliveTimer=0;
+					window.clearInterval(_tmid);//关闭定时器
+				}else{
+					alert("注销失败！");
+				}
+			},  
+			error: function(){  
+				alert("fail");  
+			}  
+		})
+	};	
+	/**
+	<!--退出请求-->
+	<cmd id="5804" ver="0">
+		<UserID val="100001" />
+		<!--直播活动ID-->
+		<ActivityID val="A2015111200777" />
+	</cmd> 
+	
+	<!--服务器返回消息探测请求-->
+	<cmd id="5904" >
+		<!--返回结果 0成功-->
+		<Result val="0"/>
+	</cmd>
+	*/
+	
+	
+	//获取服务器消息
+	function getmsg(){
+		var ActivityID=_ActivityID;//直播活动ID
+		var UserID =_UserID;
+		var reqdate="<cmd id='5803'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityID +"'/></cmd>";
+		var url=_url +reqdate ;
+        $.ajax({  
+            type: "GET",  
+            async: false,  
+            url:url,  
+            dataType: "jsonp",  
+            jsonp: "callback",
+            contentType: "application/jsonp; charset=utf-8",
+            success: function(json){  
+				//返回结果 0成功 0x1004WEB还未登录，具体值可以通过计算器转换为十进制
+				var resdata =json.respCmd;
+				_Result = $(resdata).find('Result').attr('val');
+				if (_Result=='0'){
+					alert("获取消息成功！");
+					//消息内容
+					var msgcontent = $(resdata).find('MsgInfo').children().map(function(){
+							return $(this).find('Content').attr('val');
+						}).get().join().split(",");
+						
+					//发送者ID，这里一般为主席ID
+					var _SrcID = $(resdata).find('MsgInfo').children().map(function(){
+							return $(this).find('SrcID').attr('val');
+						}).get().join().split(",");	
+					
+					//接受者ID，这里一般为自己ID
+					var _DestID = $(resdata).find('MsgInfo').children().map(function(){
+							return $(this).find('DestID').attr('val');
+						}).get().join().split(",");	
+					
+					
+					//发送时间
+					var SendTime = $(resdata).find('MsgInfo').children().map(function(){
+							return $(this).find('SendTime').attr('val');
+						}).get().join().split(",");	
+					
+					alert("获取的消息为："+msgcontent);
+				}else if (_Result=='4100'){
+					alert("未登录！");
+					window.clearInterval(_tmid);//关闭定时器
+				}else{
+					alert("获取消息失败！");
+				}
+			},  
+			error: function(){  
+				alert("fail");  
+			}  
+		})
+	};
+	/**
+	<!--消息探测请求-->
+	<cmd id="5803" ver="0">
+		<UserID val="100001" />
+		<!--直播活动ID-->
+		<ActivityID val="A2015111200777" />
+	</cmd> 
+	<!--服务器返回消息探测请求-->
+	<cmd id="5903" >
+		<!--返回结果 0成功, 0x1004WEB还未登录-->
+		<Result val="0"/>
+		<!--消息队列-->
+		<MsgInfo>
+			<Msg>
+				<!--发送者ID，这里一般为主席ID-->
+				<SrcID val="100001"/>
+				<!--接受者ID，这里一般为自己ID-->
+				<DestID val="100001"/>
+				<!--消息内容-->
+				<Content val="你好"/>
+				<!--发送时间-->
+				<SendTime val="2423423"/>
+			</Msg>
+			<Msg>
+				<!--发送者ID，这里一般为主席ID-->
+				<SrcID val="100001"/>
+				<!--接受者ID，这里一般为自己ID-->
+				<DestID val="100001"/>
+				<!--消息内容-->
+				<Content val="你好"/>
+				<!--发送时间-->
+				<SendTime val="2423423"/>
+			</Msg>
+		</MsgInfo>
+	</cmd>
+	**/
+	
+	//向服务器发消息
+	function sendmsg(){
+		var ActivityID=_ActivityID;//直播活动ID
+		var UserID =_PresidentID; //接受方：UserID：0，表示群发消息，如果不是群发消息，则跟DestID保持一致
+		var SrcID =_UserID; //发送者ID，这里一般为自己ID
+		var DestID =_PresidentID;//接受者ID，这里一般为主席ID， 0为广播消息
+		var Content =encodeURI(encodeURI("服务器你好！"));//消息内容-
+		var SendTime="1231321";//发送时间
+		var reqdate="<cmd id='5805'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityID +"'/><SrcID val='" + SrcID +"'/>"
+			+ "<DestID val='" + DestID +"'/><Content val='" + Content +"'/><SendTime val='" + SendTime +"'/></cmd>";
+		var url=_url +reqdate ;
+        $.ajax({  
+            type: "GET",  
+            async: false,  
+            url:url,  
+            dataType: "jsonp",  
+            jsonp: "callback",
+            contentType: "application/jsonp; charset=utf-8",
+            success: function(json){  
+				//返回结果 0成功 0x1004WEB还未登录，具体值可以通过计算器转换为十进制
+				var resdata =json.respCmd;
+				_Result = $(resdata).find('Result').attr('val');
+				if (_Result=='0'){
+					alert("发送消息成功！");
+				}else{
+					alert("发送消息失败！");
+				}
+			},  
+			error: function(){  
+				alert("fail");  
+			}  
+		})		
+	};	
+	/**
+		<!--向服务器发送消息请求-->
+	<cmd id="5805" ver="0">
+		<!--发送者ID-->
+		<UserID val="100001" />	
+		<!--直播活动ID-->
+		<ActivityID val="A2015111200777" />
+		<!--发送者ID，这里一般为自己ID-->
+		<SrcID val="100001"/>
+		<!--接受者ID，这里一般为主席ID， 0为广播消息-->
+		<DestID val="100001"/>
+		<!--消息内容-->
+		<Content val="你好"/>
+		<!--发送时间-->
+		<SendTime val="2423423"/>
+
+	</cmd> 
+		<!--服务器返回发送消息结果-->
+	<cmd id="5905" >
+		<!--返回结果 0成功-->
+		<Result val="0"/>
+	</cmd>
+	**/
+	
+	$("#getXML").click(function(){
+		getXML();
+	});
+	function getXML(){
+		var resdata="<cmd id='5903'><Result val='0' /><MsgInfo><Msg><SrcID val='900049' /><DestID val='0' /><Content val='111' />"
+			+ "<SendTime val='0' /></Msg><Msg><SrcID val='900049' /><DestID val='0' /><Content val='111234' /><SendTime val='0' /></Msg></MsgInfo></cmd>"
+		var result = $(resdata).find('MsgInfo').children().map(function(){
+			return $(this).attr('Content')+'='+$(this).text();
+		}).get().join();		
+		
+		alert(resdata); 			
+	}; 
+})	
+
+</script>
+
+
+<style type="text/css">
     #BizQQWPA {
       display: none !important;
     }
@@ -24,14 +428,265 @@
     #updateBizQQWPA {
       display: none !important;
     }
-  </style>
+
+
+    
+#im-chat-container{
+  	width: 371px;
+  	height: 500px;
+	/* vertical-align:middle;*/
+  	float: right;
+ 	border: 1px solid #bebebe;
+  	background: #fff;
+  	overflow: hidden;
+ 	display: none;
+  	position: relative;
+}
+
+.logintitle{
+	height: 38px;
+	margin: 2px 2px 2px 2px;
+	background: #f5f5f5;
+}
+
+/* 登录 */
+#im-login{
+  height: 24px;
+  line-height: 22px;
+  margin: 5px 6px 5px 15px;
+  display: inline-block;
+  background: #006fc2;
+  color: #fff;
+  text-decoration: none;
+  /* font-size: 15px; */
+  padding: 0 20px;
+  float: right;
+}
+/* 退出 */
+#im-logout{
+  height: 24px;
+  line-height: 22px;
+  margin: 5px 6px 5px 15px;
+  display: inline-block;
+  background: #006fc2;
+  color: #fff;
+  text-decoration: none;
+  /* font-size: 15px; */
+  padding: 0 20px;
+  float: right;
+}
+
+
+/*消息标题*/
+.im-msb-content textarea {
+  width: 371px;
+  height: 77px;
+  display: block;
+  border: 0;
+  padding: 5px 10px;
+  resize: none;
+  outline: 0;
+  background-color: #fff;
+}	
+
+/*说话人*/
+.sendname{
+	color:#F00;
+	font-size:14pt;
+	font-weight:700
+}
+
+/*说话时间*/
+.sendtime{
+	color:#00F;
+}
+
+.msgcontext{
+	margin: 10px 5px 5px 15px;
+}
+
+
+.im-msb-operation {
+  height: 28px;
+  line-height: 28px;
+  background: #eee;
+  border-top: 1px solid #e7e7e7;
+}
+.im-msbc-footer {
+  width: 371px;
+  height: 37px;
+  background: #f5f5f5;
+  overflow: hidden;
+}
+a.im-msbc-btn {
+  height: 24px;
+  line-height: 22px;
+  margin: 5px 6px 5px 15px;
+  display: inline-block;
+  background: #006fc2;
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  padding: 0 20px;
+  float: right;
+}
+
+
+.msg-list {
+	/**
+	width: 100%;
+	height: 100%;
+		height: 256px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	**/
+
+}
+
+.msg-list-all{
+	height: 256px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+ ul.clearfix, li.clearfix {
+	margin-left: -24px;
+	padding: 0px 0px 2px 2px;
+	list-style: none;
+	
+}
+
+ul.im-msb-operation{
+	list-style: none;
+	margin-top: 0px;
+}
+.msg-list > li {
+	width: 100%;
+}
+.msg-part .sendingMsg {
+	position: absolute;
+	left: -25px;
+	display: block;
+	width: 20px;
+	height: 20px;
+}
+.my .msg-part .content {
+	float: right;
+}
+.msg-part .content {
+	font-size: 12px;
+	line-height: 18px;
+}
+.my .content {
+	border: 1px solid #cddff2;
+	background: #e1f5ff;
+}
+.msg-part .content {
+	position: relative;
+	display: inline-block;
+	font-size: 12px;
+	color: #333333;
+	border-radius: 5px;
+	padding: 10px;
+	margin: 8px 0 0 0;
+	word-break: break-all;
+	-webkit-user-select: text;
+}
+.my .msg-part {
+	float: right;
+	margin-right: 10px;
+}
+.msg-part {
+	max-width: 70%;
+}
+</style>
   
 </head>
-<object name="objPlayer" width="800" id="player" height="600" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
+<body> 
+<object name="objPlayer" width="800px" id="player" height="600px" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
 <param name="allowFullScreen" value="true">
 <param name="allowScriptAccess" value="always" />
 <param name="flashVars" value="activityId=" />
 <param name="movie" value="http://qhongmeet.com/playpage/player.swf" />
 <embed src="http://qhongmeet.com//playpage/player.swf" flashVars="activityId=" name="player" width="800" height="600" allowFullScreen="true" type="application/x-shockwave-flash"  allowScriptAccess="always"/>
 </object>
+
+	<div id ="im-chat-container" class="im-chat-container" style="display: block;">
+		<!-- 消息标题 -->
+		
+		<div class="logintitle">
+			<a id="im-login" href="javascript:;" title="登录">登录</a>
+			<a id="im-logout" href="javascript:;" title="退出">退出</a>
+		</div>
+		
+        <div class="msg-list-all">
+			<ul class="msg-list" data-id="" scroll-load-history scroll-bottom-list>
+				<!--
+				<li class="load-more-msg" ng-if="msgList.showMore" click-load-history><a href="javascript:void(0)">查看更多消息</a></li>
+				<li class="loading-img" ng-show="msgList.loading"><img src="../../images/loading.gif" alt="正在加载中..." /></li>
+				--> 
+				<li class="clearfix">
+					<div class ="msgbox" msgid="1" >
+						<!--
+						<div class ="photo">
+							//放图片，暂时不用
+						</div>
+						-->
+						<div class="msgpart">
+							<span class="sendname">
+								群主
+							</span>
+							<span class="sendtime">
+								01-21 14:34:12
+							</span>
+						</div>
+						<div class="msgcontext">
+							<div class ="sendingMsg"></div>
+							<a>我是一直小毛驴</a>
+						</div>
+					</div>
+				</li>
+				
+				<li class="clearfix"  >
+					<div class ="msgbox" msgid="1" >
+						<!--
+						<div class ="photo">
+							//放图片，暂时不用
+						</div>
+						-->
+						<div class="msgpart">
+							<span class="sendname">
+								群主
+							</span>
+							<span class="sendtime">
+								01-21 14:34:12
+							</span>
+						</div>
+						<div class="msgcontext">
+							<div class ="sendingMsg"></div>
+							<a style='display:block;width:40px;'>我是一直小毛驴</a></br>
+							<a>我是一直小毛驴</a></br>
+							<a>我是一直小毛驴</a></br>
+							<a>我是一直小毛驴</a></br></br>
+							<a>我是一直小毛驴</a></br>
+							<a>我是一直小毛驴</a></br>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+        <!-- 消息发送区域 -->     
+		<div class="im-message-sendbox ">
+            <ul class="im-msb-operation">
+        		<li>连接中…………</li>
+    		</ul>
+    		<div class="im-msb-content">
+        		<textarea id="im-msbc-box" class="textarea"></textarea>
+        		<div class="im-msbc-footer">
+            		<a class="im-msbc-btn" href="javascript:;" title="发送">发送</a>
+        		</div>
+    		</div>
+		</div>    
+    </div> 
+</body>     
 </html>

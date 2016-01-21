@@ -6,56 +6,29 @@
 <style>
 
 #im-chat-container{
-  	width: 371px;
-  	height: 500px;
+  	width: 670px;
+  	height: 100%;
  	margin:0 auto ;
 	/* vertical-align:middle;*/
   	float: left;
- 	border: 1px solid #bebebe;
+ 	 border: 1px solid #bebebe;
   	background: #fff;
- 	margin-left: 200px;/*左边距*/
+ 	 margin-left: 200px;
   	overflow: hidden;
  	display: none;
   	position: relative;
 }
 
-.logintitle{
-	height: 38px;
-	margin: 2px 2px 2px 2px;
-	background: #f5f5f5;
+.im-chat-title {
+  height: 42px;
+  padding: 10px 0 10px 10px;
+  border-bottom: 1px solid #e6e6e6;
+  overflow: hidden;
+  background: #eee;
 }
 
-/* 登录 */
-#im-login{
-  height: 24px;
-  line-height: 22px;
-  margin: 5px 6px 5px 15px;
-  display: inline-block;
-  background: #006fc2;
-  color: #fff;
-  text-decoration: none;
-  /* font-size: 15px; */
-  padding: 0 20px;
-  float: right;
-}
-/* 退出 */
-#im-logout{
-  height: 24px;
-  line-height: 22px;
-  margin: 5px 6px 5px 15px;
-  display: inline-block;
-  background: #006fc2;
-  color: #fff;
-  text-decoration: none;
-  /* font-size: 15px; */
-  padding: 0 20px;
-  float: right;
-}
-
-
-/*消息标题*/
 .im-msb-content textarea {
-  width: 371px;
+  width: 650px;
   height: 77px;
   display: block;
   border: 0;
@@ -65,23 +38,6 @@
   background-color: #fff;
 }	
 
-/*说话人*/
-.sendname{
-	color:#F00;
-	font-size:14pt;
-	font-weight:700
-}
-
-/*说话时间*/
-.sendtime{
-	color:#00F;
-}
-
-.msgcontext{
-	margin: 10px 5px 5px 15px;
-}
-
-
 .im-msb-operation {
   height: 28px;
   line-height: 28px;
@@ -89,7 +45,7 @@
   border-top: 1px solid #e7e7e7;
 }
 .im-msbc-footer {
-  width: 371px;
+  width: 670px;
   height: 37px;
   background: #f5f5f5;
   overflow: hidden;
@@ -107,37 +63,24 @@ a.im-msbc-btn {
   float: right;
 }
 
+<!--  消息内容-->
+.msg-list-all{
+	width:
+
+}
+
+
 
 .msg-list {
-	/**
 	width: 100%;
 	height: 100%;
-		height: 256px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	**/
-
-}
-
-.msg-list-all{
-	height: 256px;
 	overflow-x: hidden;
 	overflow-y: auto;
 }
-
  ul.clearfix, li.clearfix {
-	margin-left: -24px;
-	padding: 0px 0px 2px 2px;
+	margin: 8px;
+	padding: 8px;
 	list-style: none;
-	
-}
-
-ul.im-msb-operation{
-	list-style: none;
-	margin-top: 0px;
-}
-.msg-list > li {
-	width: 100%;
 }
 .msg-part .sendingMsg {
 	position: absolute;
@@ -175,111 +118,41 @@ ul.im-msb-operation{
 .msg-part {
 	max-width: 70%;
 }
+
 </style>
 
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.1.min.js" ></script>
 <script type="text/javascript">
 $(document).ready(function(){
-	$(".msg-list-all")[0].scrollTop = $(".msg-list-all")[0].scrollHeight;//滚动条默认在底部
-	var activityId = getparamvalue();
-	if (activityId==""){
-		activityId="110";
-	}
-	alert(activityId);
-	//消息体
-	var msgcontext=
-		{
-			'sender':'',//发送者
-			'receiver':'',//发送者
-			'time':'',//接发时间
-			'context':'',//内容
-			'type':''//内容类型
-		};
-
-	//登录
-	$("#im-login").click(function(){
-
-	});
-
-	//退出	
-	$("#im-logout").click(function(){
-		var activityId = getparamvalue();
-	});
-	
-	
 	$(".im-msbc-btn").click(function(){
-		if ($.trim($("#im-msbc-box").val())==""){
-			return;
-		}
-		
-		getsendmsg(msgcontext);
-		var temp = loadmsg(msgcontext);
-		$("ul.msg-list").append(temp);
-		$(".msg-list-all")[0].scrollTop = $(".msg-list-all")[0].scrollHeight;
-		$("#im-msbc-box").val("");//清空消息发送框
+		addcontext();
 	});
-
-	//获取消息内容组装消息对象
-	function getsendmsg(msgcontext){
-		//装载消息体
-		msgcontext.context=$("#im-msbc-box").val();
-		msgcontext.sender="群主";
-		msgcontext.receiver="";
-		msgcontext.time="01-21 14:34:12";
-		msgcontext.type="";
-	}
-
-	//根据消息对象生成消息html格式内容
-	function loadmsg(msgcontext){
-
-		var msg="<li class='clearfix'>"
-					+"<div class ='msgbox' msgid='1' >"
-					+"		<div class='msgpart'> "
-					+"			<span class='sendname'> "
-					+"				 "+ msgcontext.sender 
-					+"			</span> "
-					+"			<span class='sendtime'>"
-					+"				" + msgcontext.time 
-					+"			</span>"
-					+"		</div>"
-					+"		<div class='msgcontext'>"
-					+"			<div class ='sendingMsg'></div>"
-					+"			<a style='display:block;width:40px;'>"+ msgcontext.context +"</a>"
-					+"		</div>"
-					+"	</div>"
-					+"</li>"
-		return 	msg ;		
-	};
-
-	//获取参数值
-	function getparamvalue(){
-		var temp = document.getElementsByName("flashVars")[0].value;
-		var val= temp.split("=");
-		if (val.length>=2){
-			return $.trim(val[1]);
+	function addcontext(){
+		var  $msg=$(".im-chat-p-ms");
+		if ($msg.children().length <10){
+		var context="<div><p>今天天气真好1</p></div>";
+			$(".im-chat-p-ms").append(context);
 		}
 	};
-	
 })
 </script>
 </head>
 <body>
+
 	<div id ="im-chat-container" class="im-chat-container" style="display: block;">
 		<!-- 消息标题 -->
-		
-		<div class="logintitle">
-			<a id="im-login" href="javascript:;" title="登录">登录</a>
-			<a id="im-logout" href="javascript:;" title="退出">退出</a>
+		<div class="im-chat-title">
+			<span class="im-char-usersnum">聊天</span>
 		</div>
-		
-        <div class="msg-list-all">
+        <div class="msg-list-all" >
 			<ul class="msg-list" data-id="" scroll-load-history scroll-bottom-list>
 				<!--
 				<li class="load-more-msg" ng-if="msgList.showMore" click-load-history><a href="javascript:void(0)">查看更多消息</a></li>
 				<li class="loading-img" ng-show="msgList.loading"><img src="../../images/loading.gif" alt="正在加载中..." /></li>
 				--> 
-				<li class="clearfix">
+				<li class="clearfix" repeat="msgItem in msgList.list">
+					<message></message>
 					<div class ="msgbox" msgid="1" >
 						<!--
 						<div class ="photo">
@@ -301,7 +174,8 @@ $(document).ready(function(){
 					</div>
 				</li>
 				
-				<li class="clearfix"  >
+				<li class="clearfix"  repeat="msgItem in msgList.list" >
+					<message></message>
 					<div class ="msgbox" msgid="1" >
 						<!--
 						<div class ="photo">
@@ -318,21 +192,22 @@ $(document).ready(function(){
 						</div>
 						<div class="msgcontext">
 							<div class ="sendingMsg"></div>
-							<a style='display:block;width:40px;'>我是一直小毛驴</a></br>
-							<a>我是一直小毛驴</a></br>
-							<a>我是一直小毛驴</a></br>
-							<a>我是一直小毛驴</a></br></br>
-							<a>我是一直小毛驴</a></br>
-							<a>我是一直小毛驴</a></br>
+							<a>我是一直小毛驴</a>
 						</div>
 					</div>
 				</li>
 			</ul>
+			<!--
+			<div class="latest-msg" ng-if="msgList.showLatestMsg" latest-msg-handler>
+				<p class="ellipsis">最新消息：<span ng-bind="msgList.list[msgList.list.length - 1].content"></span></p>
+				<span class="close-latest">×</span>
+			</div>
+			--> 
 		</div>
         <!-- 消息发送区域 -->     
 		<div class="im-message-sendbox ">
             <ul class="im-msb-operation">
-        		<li>连接中…………</li>
+        		<li>表情</li>
     		</ul>
     		<div class="im-msb-content">
         		<textarea id="im-msbc-box" class="textarea"></textarea>
