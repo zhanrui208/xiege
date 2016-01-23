@@ -25,6 +25,22 @@ $(document).ready(function(){
 		activityId="110";
 	}
 	alert(activityId);
+	//
+	var _ActivityID =activityId;
+	var _PresidentID ="";
+	var _UserID ="";
+	
+	var _tmid=0;
+	
+	var getTimers=1000;//默认的请求消息轮询时间
+	var _KeepAliveTimer=getTimers;
+	
+	var _Result ="";//各种请求的成功标识
+	var _SrcID="";//获取服务器消息时的发送者id
+	var _DestID="";//获取服务器消息的接受者id
+	
+	var _url="http://120.25.151.98:5998?";//服务器地址
+	
 	//消息体
 	var msgcontext=
 		{
@@ -35,6 +51,8 @@ $(document).ready(function(){
 			'type':''//内容类型
 		};
 
+	login();
+	
 	//登录
 	$("#im-login").click(function(){
 
@@ -42,30 +60,35 @@ $(document).ready(function(){
 
 	//退出	
 	$("#im-logout").click(function(){
-		var activityId = getparamvalue();
+		logout();
 	});
 	
 	
 	$(".im-msbc-btn").click(function(){
 		if ($.trim($("#im-msbc-box").val())==""){
 			return;
-		}
-		
-		getsendmsg(msgcontext);
-		var temp = loadmsg(msgcontext);
-		$("ul.msg-list").append(temp);
-		$(".msg-list-all")[0].scrollTop = $(".msg-list-all")[0].scrollHeight;
+		}		
+		var  msgcontext = getsendmsg();
+		loadcontext(msgcontext);
 		$("#im-msbc-box").val("");//清空消息发送框
 	});
 
-	//获取消息内容组装消息对象
-	function getsendmsg(msgcontext){
+	//加载消息到窗体
+	function loadcontext(strmsgcontext){
+		var temp = loadmsg(strmsgcontext);
+		$("ul.msg-list").append(temp);
+		$(".msg-list-all")[0].scrollTop = $(".msg-list-all")[0].scrollHeight;
+	};
+	
+	//获取窗体的消息内容组装消息对象
+	function getsendmsg(){
 		//装载消息体
 		msgcontext.context=$("#im-msbc-box").val();
-		msgcontext.sender="群主";
+		msgcontext.sender="我";
 		msgcontext.receiver="";
 		msgcontext.time="01-21 14:34:12";
 		msgcontext.type="";
+		return msgcontext;
 	}
 
 	//根据消息对象生成消息html格式内容
@@ -99,21 +122,7 @@ $(document).ready(function(){
 		}
 	};
 	
-	//
-	var _ActivityID =activityId;
-	var _PresidentID ="";
-	var _UserID ="";
-	
-	var _tmid=0;
-	
-	var getTimers=1000;//默认的请求消息轮询时间
-	var _KeepAliveTimer=getTimers;
-	
-	var _Result ="";//各种请求的成功标识
-	var _SrcID="";//获取服务器消息时的发送者id
-	var _DestID="";//获取服务器消息的接受者id
-	
-	var _url="http://120.25.151.98:5998?";//服务器地址
+
 
 	$("#btnlogin").click(function(){
 			login();
@@ -161,12 +170,18 @@ $(document).ready(function(){
 					}
 					//登录成功之后开始轮询消息
 					var _tmid = window.setInterval(getmsgafterlgon, _KeepAliveTimer);
-				}else{
+				}else if(_Result=='4098'){
+					alert("房间不存在");
+				}else if (_Result=='4099'){
+					alert("房间已满");
+				}else if (_Result=='4100'){
+					alert("未登录");
+				}else {
 					alert("登录失败！");
 				}
 			},  
 			error: function(){  
-				alert("fail");  
+				alert("登陆请求接口失败！");  
 			}  
 		})
 	};	
@@ -276,17 +291,21 @@ $(document).ready(function(){
 				if (_Result=='0'){
 					alert("获取消息成功！");
 					//消息内容
-					var msgcontent = $(resdata).find('MsgInfo').children().map(function(){
+					var msg = $(resdata).find('MsgInfo').children().map(function(){
 							return $(this).find('Content').attr('val');
 						}).get().join().split(",");
-						
+					
+					if (msg=="" || msg ==null){
+						return;
+					}
+					
 					//发送者ID，这里一般为主席ID
-					var _SrcID = $(resdata).find('MsgInfo').children().map(function(){
+					var SrcID = $(resdata).find('MsgInfo').children().map(function(){
 							return $(this).find('SrcID').attr('val');
 						}).get().join().split(",");	
 					
 					//接受者ID，这里一般为自己ID
-					var _DestID = $(resdata).find('MsgInfo').children().map(function(){
+					var DestID = $(resdata).find('MsgInfo').children().map(function(){
 							return $(this).find('DestID').attr('val');
 						}).get().join().split(",");	
 					
@@ -296,7 +315,17 @@ $(document).ready(function(){
 							return $(this).find('SendTime').attr('val');
 						}).get().join().split(",");	
 					
-					alert("获取的消息为："+msgcontent);
+					alert("获取的消息为："+msg);
+					
+					//把接收到的内容加载到窗体
+					for(var i=0;i<msg.length;i++){
+							msgcontext.context=msg[i];
+							msgcontext.sender=SrcID[i];
+							msgcontext.receiver=DestID[0];
+							msgcontext.time=SendTime[0];
+							msgcontext.type="";
+							loadcontext(msgcontext);
+					}				
 				}else if (_Result=='4100'){
 					alert("未登录！");
 					window.clearInterval(_tmid);//关闭定时器
@@ -402,7 +431,7 @@ $(document).ready(function(){
 		<Result val="0"/>
 	</cmd>
 	**/
-	
+	/**
 	$("#getXML").click(function(){
 		getXML();
 	});
@@ -415,12 +444,16 @@ $(document).ready(function(){
 		
 		alert(resdata); 			
 	}; 
+	**/
 })	
 
 </script>
 
 
 <style type="text/css">
+
+
+
     #BizQQWPA {
       display: none !important;
     }
@@ -429,51 +462,50 @@ $(document).ready(function(){
       display: none !important;
     }
 
-
+body{
+	background : #B0B0B0;
+}
     
 #im-chat-container{
-  	width: 371px;
-  	height: 500px;
+  	width: 460px;
+  	height: 408px;
 	/* vertical-align:middle;*/
   	float: right;
  	border: 1px solid #bebebe;
   	background: #fff;
-  	overflow: hidden;
+  	/* overflow: hidden;*/
  	display: none;
   	position: relative;
+  	 margin-right: 30px;
 }
 
 .logintitle{
-	height: 38px;
 	margin: 2px 2px 2px 2px;
-	background: #f5f5f5;
 }
 
-/* 登录 */
+/* 登录 
 #im-login{
   height: 24px;
   line-height: 22px;
   margin: 5px 6px 5px 15px;
   display: inline-block;
-  background: #006fc2;
+  background: #1E90FF;
   color: #fff;
   text-decoration: none;
-  /* font-size: 15px; */
   padding: 0 20px;
   float: right;
 }
+*/
 /* 退出 */
 #im-logout{
-  height: 24px;
-  line-height: 22px;
-  margin: 5px 6px 5px 15px;
-  display: inline-block;
-  background: #006fc2;
+  width : 75px;
+  background: #1E90FF;
   color: #fff;
   text-decoration: none;
-  /* font-size: 15px; */
-  padding: 0 20px;
-  float: right;
+  font-size: 25px;
+  text-align: center;
+  padding: 10 50;
+  line-height: 120px;
 }
 
 
@@ -513,22 +545,20 @@ $(document).ready(function(){
   border-top: 1px solid #e7e7e7;
 }
 .im-msbc-footer {
-  width: 371px;
-  height: 37px;
+  height: 30px;
   background: #f5f5f5;
   overflow: hidden;
 }
 a.im-msbc-btn {
-  height: 24px;
+  height: 30px;
+  width : 100%;
   line-height: 22px;
-  margin: 5px 6px 5px 15px;
   display: inline-block;
-  background: #006fc2;
+  background: #1E90FF;
   color: #fff;
   text-decoration: none;
-  font-size: 15px;
-  padding: 0 20px;
-  float: right;
+  font-size: 18px;
+  text-align: center;
 }
 
 
@@ -599,26 +629,84 @@ ul.im-msb-operation{
 .msg-part {
 	max-width: 70%;
 }
+
+#divplayer,#playsrc{
+	width : 680px; 
+	height : 510px;
+	float: left;
+	margin-left: 30px;
+}
+
+
+
+#meettitle{
+	height : 120px;
+	width:100%;
+}
+#meetcontext{
+	height : 120px;
+	width:70%;
+	float: left;
+}
+
+#dmeetmsg{
+	margin-left: 160px;
+  	margin-top: 20px;
+}
+
+#ameetmsg{
+	font-size: 40px;
+}
+
+#meettime{
+	font-size: 20px;
+	 margin-left: 180px
+}
+
+#meetlogout{
+	height:120px;
+	width:20%;
+ 	float: right;
+}
+
+#maincontext{
+	width:100%;
+	height:520px;
+}
+
 </style>
-  
 </head>
 <body> 
-<object name="objPlayer" width="800px" id="player" height="600px" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
-<param name="allowFullScreen" value="true">
-<param name="allowScriptAccess" value="always" />
-<param name="flashVars" value="activityId=" />
-<param name="movie" value="http://qhongmeet.com/playpage/player.swf" />
-<embed src="http://qhongmeet.com//playpage/player.swf" flashVars="activityId=" name="player" width="800" height="600" allowFullScreen="true" type="application/x-shockwave-flash"  allowScriptAccess="always"/>
-</object>
 
-	<div id ="im-chat-container" class="im-chat-container" style="display: block;">
-		<!-- 消息标题 -->
-		
-		<div class="logintitle">
-			<a id="im-login" href="javascript:;" title="登录">登录</a>
-			<a id="im-logout" href="javascript:;" title="退出">退出</a>
+<div id= "meettitle">
+	<div id ="meetcontext">
+		<div id ="dmeetmsg" >
+			<a id="ameetmsg" >2016苹果现场发布会</a>
 		</div>
-		
+		<div id ="meettime">
+			<a>开始时间：2016-07-09/2016-07-09</a>
+		</div>
+	</div>
+	<div id = "meetlogout">
+		<!--  <a id="im-login" href="javascript:;" title="登录">登录</a> -->
+		<a id="im-logout" href="javascript:;" title="退出">退出</a>
+	</div>
+</div>
+
+<div id ="maincontext">
+	<div  id ="divplayer" >
+		<object name="objPlayer" id="player"  classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
+		<param name="allowFullScreen" value="true">
+		<param name="allowScriptAccess" value="always" />
+		<param name="flashVars" value="activityId=" />
+		<param name="movie" value="http://qhongmeet.com/playpage/player.swf" />
+		<embed id ="playsrc" src="http://qhongmeet.com//playpage/player.swf" flashVars="activityId=" name="player"  allowFullScreen="true" type="application/x-shockwave-flash"  allowScriptAccess="always"/>
+		</object>
+	</div>
+	
+	
+	<div id ="im-chat-container" class="im-chat-container" style="display: block;">
+		<!-- 消息标题 -->	
         <div class="msg-list-all">
 			<ul class="msg-list" data-id="" scroll-load-history scroll-bottom-list>
 				<!--
@@ -688,5 +776,6 @@ ul.im-msb-operation{
     		</div>
 		</div>    
     </div> 
+  </div>    
 </body>     
 </html>
