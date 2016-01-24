@@ -65,9 +65,11 @@ $(document).ready(function(){
 	
 	
 	$(".im-msbc-btn").click(function(){
-		if ($.trim($("#im-msbc-box").val())==""){
+		var msg=$.trim($("#im-msbc-box").val();
+		if (msg ==""){
 			return;
-		}		
+		}	
+		sendmsg(msg)
 		var  msgcontext = getsendmsg();
 		loadcontext(msgcontext);
 		$("#im-msbc-box").val("");//清空消息发送框
@@ -376,12 +378,12 @@ $(document).ready(function(){
 	**/
 	
 	//向服务器发消息
-	function sendmsg(){
+	function sendmsg(Contentmsg){
 		var ActivityIDex=_ActivityIDex;//直播活动ID
 		var UserID =_PresidentID; //接受方：UserID：0，表示群发消息，如果不是群发消息，则跟DestID保持一致
 		var SrcID =_UserID; //发送者ID，这里一般为自己ID
 		var DestID =_PresidentID;//接受者ID，这里一般为主席ID， 0为广播消息
-		var Content =encodeURI(encodeURI("服务器你好！"));//消息内容-
+		var Content =encodeURI(encodeURI(Contentmsg));//消息内容-
 		var SendTime="1231321";//发送时间
 		var reqdate="<cmd id='5805'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityIDex +"'/><SrcID val='" + SrcID +"'/>"
 			+ "<DestID val='" + DestID +"'/><Content val='" + Content +"'/><SendTime val='" + SendTime +"'/></cmd>";
