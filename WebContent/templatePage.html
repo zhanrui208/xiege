@@ -20,13 +20,13 @@
     
 $(document).ready(function(){
 	$(".msg-list-all")[0].scrollTop = $(".msg-list-all")[0].scrollHeight;//滚动条默认在底部
-	var activityId = getparamvalue();
-	if (activityId==""){
-		activityId="110";
+	var activityIdex = getparamvalue();
+	if (activityIdex==""){
+		activityIdex="110";
 	}
-	alert(activityId);
+	alert(activityIdex);
 	//
-	var _ActivityID =activityId;
+	var _ActivityIDex =activityIdex;
 	var _PresidentID ="";
 	var _UserID ="";
 	
@@ -141,10 +141,10 @@ $(document).ready(function(){
 	function login(){
 		var ClientType="1"; //ClientType 1为WEB 2为PC
 		var TerminalType="1";//TerminalType暂时未用到，留作扩展
-		var ActivityID=_ActivityID;//直播活动ID
+		var ActivityIDex=_ActivityIDex;//直播活动ID
 		var KeepAliveTimer=null;
 		//服务器登录请求参数
-		var reqdate="<cmd id='5802'><ClientType val='" + ClientType +"'/><TerminalType val='" + TerminalType +"'/><ActivityID val='" + ActivityID +"'/></cmd>";
+		var reqdate="<cmd id='5802'><ClientType val='" + ClientType +"'/><TerminalType val='" + TerminalType +"'/><ActivityID val='" + ActivityIDex +"'/></cmd>";
 		var url=_url +reqdate ;
         $.ajax({  
             type: "GET",  
@@ -226,9 +226,9 @@ $(document).ready(function(){
 	//注销	
 	function logout(){
 		var UserID=_UserID; //用户
-		var ActivityID=_ActivityID;//直播活动ID
+		var ActivityIDex=_ActivityIDex;//直播活动ID
 		//服务器登录请求参数
-		var reqdate="<cmd id='5804'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityID +"'/></cmd>";
+		var reqdate="<cmd id='5804'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityIDex +"'/></cmd>";
 		var url=_url +reqdate ;
         $.ajax({  
             type: "GET",  
@@ -273,9 +273,9 @@ $(document).ready(function(){
 	
 	//获取服务器消息
 	function getmsg(){
-		var ActivityID=_ActivityID;//直播活动ID
+		var ActivityIDex=_ActivityIDex;//直播活动ID
 		var UserID =_UserID;
-		var reqdate="<cmd id='5803'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityID +"'/></cmd>";
+		var reqdate="<cmd id='5803'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityIDex +"'/></cmd>";
 		var url=_url +reqdate ;
         $.ajax({  
             type: "GET",  
@@ -377,13 +377,13 @@ $(document).ready(function(){
 	
 	//向服务器发消息
 	function sendmsg(){
-		var ActivityID=_ActivityID;//直播活动ID
+		var ActivityIDex=_ActivityIDex;//直播活动ID
 		var UserID =_PresidentID; //接受方：UserID：0，表示群发消息，如果不是群发消息，则跟DestID保持一致
 		var SrcID =_UserID; //发送者ID，这里一般为自己ID
 		var DestID =_PresidentID;//接受者ID，这里一般为主席ID， 0为广播消息
 		var Content =encodeURI(encodeURI("服务器你好！"));//消息内容-
 		var SendTime="1231321";//发送时间
-		var reqdate="<cmd id='5805'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityID +"'/><SrcID val='" + SrcID +"'/>"
+		var reqdate="<cmd id='5805'><UserID val='" + UserID +"'/><ActivityID val='" + ActivityIDex +"'/><SrcID val='" + SrcID +"'/>"
 			+ "<DestID val='" + DestID +"'/><Content val='" + Content +"'/><SendTime val='" + SendTime +"'/></cmd>";
 		var url=_url +reqdate ;
         $.ajax({  
