@@ -173,16 +173,26 @@ $(document).ready(function(){
 					//登录成功之后开始轮询消息
 					var _tmid = window.setInterval(getmsgafterlgon, _KeepAliveTimer);
 				}else if(_Result=='4098'){
+					window.location.href=getRederctUrl(_Result);
+					return;
 					alert("房间不存在");
 				}else if (_Result=='4099'){
+					window.location.href=getRederctUrl(_Result);
+					return;
 					alert("房间已满");
 				}else if (_Result=='4100'){
+					window.location.href=getRederctUrl(_Result);
+					return;
 					alert("未登录");
 				}else {
+					window.location.href=getRederctUrl('4000');
+					return;
 					alert("登录失败！");
 				}
 			},  
 			error: function(){  
+				window.location.href=getRederctUrl('4000');
+				return;
 				alert("登陆请求接口失败！");  
 			}  
 		})
@@ -214,6 +224,14 @@ $(document).ready(function(){
 	</cmd>
 	*/
 	
+	function getRederctUrl(errcode){
+		//var myurl=GetQueryString("url");
+		//if(myurl !=null && myurl.toString().length>1)
+		//{
+		 //  alert(GetQueryString("url"));
+		//}
+		return 'http://qhongmeet.com/playpage/errpage/err.html?errcode='+errcode;
+	}
 	
 	//定时器执行函数
 	function getmsgafterlgon(){
@@ -313,10 +331,11 @@ $(document).ready(function(){
 					
 					
 					//发送时间
-					var SendTime = $(resdata).find('MsgInfo').children().map(function(){
-							return $(this).find('SendTime').attr('val');
-						}).get().join().split(",");	
-					
+					//var SendTime = $(resdata).find('MsgInfo').children().map(function(){
+					//		return $(this).find('SendTime').attr('val');
+					//	}).get().join().split(",");	
+					//直接取本地时间
+					var SendTime=getNowFormatDate();
 					//alert("获取的消息为："+msg);
 					
 					//把接收到的内容加载到窗体
