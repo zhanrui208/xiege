@@ -24,7 +24,7 @@ $(document).ready(function(){
 	if (activityIdex==""){
 		activityIdex="110";
 	}
-	alert(activityIdex);
+	//alert(activityIdex);
 	//
 	var _ActivityIDex =activityIdex;
 	var _PresidentID ="";
@@ -65,7 +65,7 @@ $(document).ready(function(){
 	
 	
 	$(".im-msbc-btn").click(function(){
-		var msg=$.trim($("#im-msbc-box").val();
+		var msg=$.trim($("#im-msbc-box").val());
 		if (msg ==""){
 			return;
 		}	
@@ -108,7 +108,7 @@ $(document).ready(function(){
 					+"		</div>"
 					+"		<div class='msgcontext'>"
 					+"			<div class ='sendingMsg'></div>"
-					+"			<a style='display:block;width:40px;'>"+ msgcontext.context +"</a>"
+					+"			<pre style='white-space:pre-wrap;word-wrap:break-word;width:275px'>"+ msgcontext.context +"</pre>"
 					+"		</div>"
 					+"	</div>"
 					+"</li>"
@@ -166,7 +166,7 @@ $(document).ready(function(){
 					_PresidentID  = $(resdata ).find('PresidentID').attr('val');
 					//<!--消息探测时长，设置该时长定时器，定时从服务器获取消息，单位毫秒-->
 					_KeepAliveTimer=$(resdata).find('KeepAliveTimer').attr('val');
-					alert("登录成功！");
+					//alert("登录成功！");
 					if (_KeepAliveTimer==null || _KeepAliveTimer ==0){
 						_KeepAliveTimer=getTimers;
 					}
@@ -219,7 +219,7 @@ $(document).ready(function(){
 	function getmsgafterlgon(){
 		if (_PresidentID!="" && _PresidentID!=null){
 			getmsg();
-			alert("循环读取消息");
+			//alert("循环读取消息");
 		} 
 	}
 	
@@ -291,7 +291,7 @@ $(document).ready(function(){
 				var resdata =json.respCmd;
 				_Result = $(resdata).find('Result').attr('val');
 				if (_Result=='0'){
-					alert("获取消息成功！");
+					//alert("获取消息成功！");
 					//消息内容
 					var msg = $(resdata).find('MsgInfo').children().map(function(){
 							return $(this).find('Content').attr('val');
@@ -317,7 +317,7 @@ $(document).ready(function(){
 							return $(this).find('SendTime').attr('val');
 						}).get().join().split(",");	
 					
-					alert("获取的消息为："+msg);
+					//alert("获取的消息为："+msg);
 					
 					//把接收到的内容加载到窗体
 					for(var i=0;i<msg.length;i++){
@@ -400,7 +400,7 @@ $(document).ready(function(){
 				var resdata =json.respCmd;
 				_Result = $(resdata).find('Result').attr('val');
 				if (_Result=='0'){
-					alert("发送消息成功！");
+					//alert("发送消息成功！");
 				}else{
 					alert("发送消息失败！");
 				}
@@ -722,7 +722,7 @@ ul.im-msb-operation{
 						<div class ="photo">
 							//放图片，暂时不用
 						</div>
-						-->
+						
 						<div class="msgpart">
 							<span class="sendname">
 								群主
@@ -735,33 +735,7 @@ ul.im-msb-operation{
 							<div class ="sendingMsg"></div>
 							<a>我是一直小毛驴</a>
 						</div>
-					</div>
-				</li>
-				
-				<li class="clearfix"  >
-					<div class ="msgbox" msgid="1" >
-						<!--
-						<div class ="photo">
-							//放图片，暂时不用
-						</div>
 						-->
-						<div class="msgpart">
-							<span class="sendname">
-								群主
-							</span>
-							<span class="sendtime">
-								01-21 14:34:12
-							</span>
-						</div>
-						<div class="msgcontext">
-							<div class ="sendingMsg"></div>
-							<a style='display:block;width:40px;'>我是一直小毛驴</a></br>
-							<a>我是一直小毛驴</a></br>
-							<a>我是一直小毛驴</a></br>
-							<a>我是一直小毛驴</a></br></br>
-							<a>我是一直小毛驴</a></br>
-							<a>我是一直小毛驴</a></br>
-						</div>
 					</div>
 				</li>
 			</ul>
