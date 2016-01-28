@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>errpage</title>
+<style type="text/css">
+body{
+	width:1200px;
+	margin:0 auto; 
+}
+
+#errDesc{
+	height:600px;
+	line-height:600px;
+	overflow:hidden;
+	text-align:center;
+	font-size : 50px;
+	font-weight:blod;
+}
+</style>
+ <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.1.min.js" ></script>
+  <script type="text/javascript">
+  $(document).ready(function(){
+	  
+	 var errCode =GetQueryString("errcode");
+	  
+	if(errCode=='4098'){
+		setErr("房间不存在");
+	}else if (errCode=='4099'){
+		setErr("房间已满");
+	}else if (errCode=='4100'){
+		setErr("未登录");
+	}else {
+		setErr("登录失败！");
+	};
+	
+	function setErr(errDesc){
+		$("#errDesc").text(errDesc);
+	};
+	  
+	  
+	  function GetQueryString(name)
+	  {
+	       var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+	       var r = window.location.search.substr(1).match(reg);
+	       if(r!=null)return  unescape(r[2]); return null;
+	  }; 
+  })
+  </script>
+</head>
+<body>
+	<div id= "errDesc">
+		
+	</div>
+</body>
+</html>
