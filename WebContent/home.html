@@ -6,7 +6,7 @@
   <style type="text/css">
   /** */
   body{
-  	width :100%;
+  	width :94%;
   	height:100%;
   	font: 14px;
   	font-weight: normal;
@@ -19,18 +19,27 @@
   	text-decoration: none;
 	}
 	
+	
+ p {
+  	font: 15px 'Open Sans', sans-serif;
+  	font-weight: normal;
+  	line-height: 23px;	
+	}
+	
 ul li {
  	list-style: none;
-	}	
+	}
+	
+
 	
   /** 头 */
   #main_head{
     background: #fff;	
     width:100%;
-    float:left;
    /** width: 1170px; */
   	margin: auto auto auto auto;
-  	height:80px;
+  	height:90px;
+  	/** height:auto !important; */
     }
  
  /** 图标 */
@@ -86,8 +95,89 @@ ul li {
     
     }
     
-    
-    
+    #part1{
+  		height:270px;
+  	}	
+  	
+   .ms-slide-bgcont img{
+    	/**height: 500px; */
+    	width: 100%; 
+    	margin-top: 0px; 
+    	/** margin-left: -374.5px;*/
+    }
+    .ms-slide{
+    	height:100%; 
+    	left: 0px;
+    }
+    .vc_row {
+  		margin-left: -15px;
+  		margin-right: -15px;
+  		}
+  		
+  	.vc_col-sm-4 {
+  		width: 33.33333333%;
+  		float: left;
+	}	
+  	
+  	.vc_col-sm-4{
+  	  	position: relative;
+  		min-height: 1px;
+  		padding-left: 15px;
+  		padding-right: 15px;
+ 		 -webkit-box-sizing: border-box;
+  		-moz-box-sizing: border-box;
+  		box-sizing: border-box;
+		}
+  	
+  	div.icon-box-style3 {
+  		text-align: center;
+  		width: 100%;
+  		padding: 30px 1%;
+  		}
+
+
+  
+  .icon-box-style3 h2 {
+  	font-size: 22px !important;
+  	font-weight: 500 !important;
+	}		
+	
+	/** part2  */
+	#part2{
+	  	margin-left: -92.5px !important;
+  		padding-left: 137.5px !important;
+  		margin-right: -92.5px !important;
+  		padding-right: 137.5px !important;
+		padding:20px 30px;
+		background-color: #e8ecef;
+	}
+	
+	
+	/** part3 **/
+	#part3{
+  		margin-left: -92.5px !important;
+  		padding-left: 137.5px !important;
+  		margin-right: -92.5px !important;
+  		padding-right: 137.5px !important;
+  		padding-top: 30px !important;
+  		background-color: #e8ecef !important;
+  		height:400px;
+	}
+	
+	
+	.vc_col-sm-3 {
+  		width: 25%;
+  		float: left;
+		}
+	.icon-box-style3   img {
+ 		width: 100% !important;
+ 		height:100%  !important;
+ 		
+		}
+	#part4{
+  		height:270px;
+  	}			
+			
    /** foot  */
   #main_foot{
 	color: #838383;
@@ -146,20 +236,22 @@ ul li {
 	
 		<!-- 图片部分 -->
 		<div id ="picture"  style ="height:100%" >
-		<div class="ms-slide ms-sl-selected" data-delay="3" data-fill-mode="fill" style="width: 1263px; height: 500px; left: 0px;">
+		<div class="ms-slide ms-sl-selected" data-delay="3" data-fill-mode="fill" ">
 			<div class="ms-slide-bgcont" style="height: 100%; opacity: 1;">
-				<img src="https://d16b68sffmpvhr.cloudfront.net/wp-content/uploads/2015/04/abstract-sound-waves.jpg" alt="" title="" style="height: 500px; width: 2012.72727272727px; margin-top: 0px; margin-left: -374.5px;">
+				<img src="https://d16b68sffmpvhr.cloudfront.net/wp-content/uploads/2015/04/abstract-sound-waves.jpg" alt="" title="" >
 			</div>
+			<!-- 
 			<div class="ms-slide-layers" style="left: 131.5px; max-width: 1000px; display: block; opacity: 1;">
 				<div class="ms-layer  msp-cn-24-1" style="display: block; top: 217.5px; left: 400px; opacity: 1; margin: 0px; padding: 0px; font-size: 14px;" data-ease="easeOutQuint">
 					<h1 style="text-align: center;"><span style="color: #ffffff;">沟通无界限</span></h1>
 				</div>
 			</div>
+			 -->
 		</div>
 		</div>
 		<!-- 呢绒介绍 -->
 		<div class="wpb_column vc_column_container vc_col-sm-12"><div class="wpb_wrapper">
-			<div class="wpb_text_column wpb_content_element  vc_custom_1436830314554">
+			<div class="wpb_text_column">
 				<div class="wpb_wrapper">
 					<h2 style="text-align: center;"><strong>当前实时通讯行业面临的挑战</strong>
 					<p></p>
@@ -173,7 +265,7 @@ ul li {
 
 				</div>
 			</div>				
-			<div class="vc_row wpb_row vc_inner vc_row-fluid product-cha-ben">
+			<div id ="part1" class="vc_row wpb_row ">
 				<div class="wpb_column vc_column_container vc_col-sm-4">
 					<div class="wpb_wrapper">
 						<div class="icon-box-style3  " data-wow-delay="0ms" data-wow-iteration="1">
@@ -188,7 +280,7 @@ ul li {
 				<div class="wpb_column vc_column_container vc_col-sm-4">
 					<div class="wpb_wrapper">
 					<div class="icon-box-style3  " data-wow-delay="0ms" data-wow-iteration="1">
-						<i class="fa-money fa fa-4x" style="color: #1aaee5"></i>
+						<img src="http://cn.agora.io/wp-content/uploads/2015/07/qoenew1.png">
 						<div class="clearfix"></div>
 						<h2>费用高昂</h2>
 						<p>就当前市场而言，既能够轻松集成到既有平台和应用，又能保证稳定的用户体验质量的技术解决方案价格极高，令人望而却步。 </p>
@@ -199,7 +291,7 @@ ul li {
 				<div class="wpb_column vc_column_container vc_col-sm-4">
 					<div class="wpb_wrapper">
 						<div class="icon-box-style3  " data-wow-delay="0ms" data-wow-iteration="1">
-							<i class="fa-code fa fa-4x" style="color: #1aaee5"></i>
+							<img src="http://cn.agora.io/wp-content/uploads/2015/07/qoenew1.png">
 							<div class="clearfix"></div>
 							<h2>开发难度大</h2>
 							<p>实时通讯软件的无缝集成技术极其复杂，而且很耗时间。 </p>
@@ -209,7 +301,98 @@ ul li {
 				</div>
 			</div>
 		</div>	
-	</div>		
+		
+		<div id ="part2" class="wpb_column vc_column_container vc_col-sm-12">
+			<div class="wpb_text_column wpb_content_element ">
+				<div class="wpb_wrapper">
+				<h2 style="text-align: center;">
+					<strong><span id="contentTarget">声网云通讯可以为您提供哪些好处</span></strong>
+				</h2>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 图片介绍1 -->
+		<div id ="part3" class="vc_row wpb_row vc_row-fluid ">
+			<div class="wpb_column vc_column_container vc_col-sm-3">
+			<div class="wpb_wrapper">
+				<div class="icon-box-style3  " data-wow-delay="0ms" data-wow-iteration="1">
+					<img src="http://cn.agora.io/wp-content/uploads/2015/04/Nudge2_03.jpg">
+					<div class="clearfix"></div>
+					<h2></h2>
+					<p>分布于全球各地的60多个数据中心</p>
+					<a href="#"> <i class="fa fa-angle-right"></i></a>
+				</div></div></div><div class="wpb_column vc_column_container vc_col-sm-3"><div class="wpb_wrapper">
+				<div class="icon-box-style3  " data-wow-delay="0ms" data-wow-iteration="1">
+					<img src="http://cn.agora.io/wp-content/uploads/2015/04/Nudge2_05.jpg">
+					<div class="clearfix"></div>
+					<h2></h2>
+					<p>跨平台，简单集成</p>
+					<a href="#"> <i class="fa fa-angle-right"></i></a>
+				</div></div></div><div class="wpb_column vc_column_container vc_col-sm-3"><div class="wpb_wrapper">
+				<div class="icon-box-style3  " data-wow-delay="0ms" data-wow-iteration="1">
+					<img src="http://cn.agora.io/wp-content/uploads/2015/04/Nudge2_07.jpg">
+					<div class="clearfix"></div>
+					<h2></h2>
+					<p><span style="color: #ffffff;">优质的用户体验</span><br></p>
+					<a href="#"> <i class="fa fa-angle-right"></i></a>
+				</div></div></div><div class="wpb_column vc_column_container vc_col-sm-3"><div class="wpb_wrapper">
+				<div class="icon-box-style3  " data-wow-delay="0ms" data-wow-iteration="1">
+					<img src="http://cn.agora.io/wp-content/uploads/2015/04/Nudge2_09.jpg">
+					<div class="clearfix"></div>
+					<h2></h2>
+					<p>新一代音视频Codec</p>
+					<a href="#"> <i class="fa fa-angle-right"></i></a>
+				</div>
+			</div>
+			</div>
+		</div>
+		<!-- 图片介绍2 -->
+		<!-- 好处 -->
+		<div  class="vc_row wpb_row vc_row-fluid">
+			<div class="wpb_column vc_column_container vc_col-sm-12">
+				<div class="wpb_wrapper">
+					<div class="wpb_text_column wpb_content_element ">
+						<div class="wpb_wrapper">
+							<h2 style="text-align: center;"><strong>您的应用会得到哪些好处</strong></h2>
+						</div>
+					</div>
+					<div id = "part4" class="vc_row wpb_row vc_inner vc_row-fluid product-cha-ben">
+						<div class="wpb_column vc_column_container vc_col-sm-4">
+							<div class="wpb_wrapper">
+								<div class="icon-box-style3">
+									<img src="http://cn.agora.io/wp-content/uploads/2015/07/qoenew1.png">
+									<h2>全球无差别用户体验</h2>
+									<p>我们在全球各地拥有60多个数据中心，再加上独家专利Codec和全年持续不间断的监测系统，为您带来稳定的优良端到端用户体验。</p>
+									<a href="#"> <i class="fa fa-angle-right"></i></a>
+								</div>
+							</div>
+						</div>
+						<div class="wpb_column vc_column_container vc_col-sm-4">
+							<div class="wpb_wrapper">
+								<div class="icon-box-style3">
+									<img src="http://cn.agora.io/wp-content/uploads/2015/07/qoenew1.png">
+								</div>
+								<h2>费用低廉</h2>
+								<p>不再需要高昂的预付金额。声网的价格体系简明易懂，用多少，付多少。每月前10,000分钟完全免费。</p>
+								<a href="#"> <i class="fa fa-angle-right"></i></a>
+							</div>
+						</div>
+
+						<div class="wpb_column vc_column_container vc_col-sm-4">
+							<div class="wpb_wrapper">
+							<div class="icon-box-style3  " data-wow-delay="0ms" data-wow-iteration="1">
+								<img src="http://cn.agora.io/wp-content/uploads/2015/07/qoenew1.png">
+								<h2>上市便捷</h2>
+								<p>只需几小时即可投入运行。声网SDK文档手把手教你分分钟搞定。</p>
+								<a href="#"> <i class="fa fa-angle-right"></i></a>
+							</div>
+							</div>
+						</div>
+					</div>
+				</div>	
+			</div>
+		</div>
 	
 	<!-- 最下面基本介绍部分 -->
 	<div id = main_foot>
